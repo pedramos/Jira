@@ -4,7 +4,7 @@ import (
 	"bufio"
 	"log"
 
-	"9fans.net/go/plumb"
+	"plramos.win/9fans/plumb"
 )
 
 func (ui *UI) plumber() {

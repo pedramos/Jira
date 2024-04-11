@@ -4,21 +4,30 @@ import (
 	"bytes"
 	"log"
 	"net/url"
+	"os"
 	"path"
 	"regexp"
 	"strings"
 	"sync"
 
-	"9fans.net/go/acme"
-	"9fans.net/go/plan9/client"
-	"9fans.net/go/plumb"
 	jira "github.com/andygrunwald/go-jira"
+	"plramos.win/9fans/acme"
+	"plramos.win/9fans/plan9/client"
+	"plramos.win/9fans/plumb"
 )
 
 const (
 	addrdelim = "/[! \t\\n<>()\\[\\]\"']/"
-	myIssues  = `assignee = currentUser() AND resolution = Unresolved order by updated desc`
+	// myIssues  = `assignee = currentUser() AND resolution = Unresolved order by updated desc`
 )
+
+func myIssues() string {
+
+	if q := os.Getenv("JIRAISSUES"); q != "" {
+		return q
+	}
+	return `assignee = currentUser() AND resolution = Unresolved order by updated desc`
+}
 
 type win struct {
 	*acme.Win
@@ -182,6 +191,7 @@ Event:
 			if ui.look(string(e.Text)) {
 				continue
 			}
+			//TODO: add if w.Search
 			if w.Issue {
 				// Check if this is an attachment link, transform it and send to the plumber.
 				i, _, err := ui.j.Issue.Get(w.Title, &jira.GetQueryOptions{
@@ -204,8 +214,7 @@ Event:
 						continue
 					}
 					rel.Path = strings.TrimLeft(rel.Path, "/")
-					tgt := base.ResolveReference(rel).String() + "/"
-					debug("plumbing %q", tgt)
+					tgt := base.ResolveReference(rel).String() + "/" + name
 					if ui.plumb == nil {
 						continue
 					}
@@ -223,6 +232,14 @@ Event:
 		}
 		w.WriteEvent(e)
 	}
+}
+
+func jiraId(w *win) string {
+	if !w.Issue {
+		return ""
+	}
+
+	return strings.Split(w.Title, "/")[2]
 }
 
 func getFilename(b []byte) string {
@@ -460,7 +477,8 @@ func (u *UI) look(title string) bool {
 }
 
 func (u *UI) fetchMine(w *win) {
-	l, _, err := u.j.Issue.Search(myIssues, nil)
+	l, _, err := u.j.Issue.Search(myIssues(), nil)
+	u.err(myIssues())
 	if err != nil {
 		u.err(err.Error())
 		return
