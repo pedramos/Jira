@@ -478,7 +478,6 @@ func (u *UI) look(title string) bool {
 
 func (u *UI) fetchMine(w *win) {
 	l, _, err := u.j.Issue.Search(myIssues(), nil)
-	u.err(myIssues())
 	if err != nil {
 		u.err(err.Error())
 		return
