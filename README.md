@@ -12,8 +12,17 @@ Jira can be started from the plumber. An example rule:
 	data matches '[A-Z]+-[0-9]+'
 	data matches '((CORP)|(ABC))-[0-9]+'
 	plumb to jira
-	plumb client Jira https://corp.atlassian.net
+	plumb client Jira https://<jiraserver>
 
 The 'p' flag will disable attempting to talk to the plumber. Sending
 a plumber message of type `exit` will cause Jira to close all of its
 windows and exit.
+
+
+Another plumber rule to help download attachements
+
+	type is text
+	src is Jira
+	data matches 'https:/<jiraserver>/secure/attachment/.*'
+	data matches 'https://<jiraserver>/secure/attachment/[0-9]+/(.*)'
+	plumb start rc -c 'cd <tmpdir>/; curl -s -u ''<user:password>'' -O  '$0' && plumb <tmpdir>'$1
