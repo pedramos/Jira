@@ -250,14 +250,7 @@ func getFilename(b []byte) string {
 
 func (w *win) comment() string {
 	w.Addr(`#0`)
-	w.Addr(`/^\n/,/^\nReported by/`)
-	q0, q1, err := w.ReadAddr()
-	if err != nil {
-		log.Println(err)
-		return ""
-	}
-	q1 -= len("\nReported by")
-	w.Addr(`#%d,#%d`, q0, q1)
+	w.Addr(`/^--newcomment--[ 	]*\n/+1,$`)
 	b, err := w.ReadAll("xdata")
 	if err != nil {
 		log.Println(err)
