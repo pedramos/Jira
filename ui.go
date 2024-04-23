@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"fmt"
 	"log"
 	"net/url"
 	"os"
@@ -429,7 +430,15 @@ func (u *UI) look(title string) bool {
 			}
 			w.Ctl("cleartag")
 			w.Fprintf("tag", " Get Clear ")
-			w.Fprintf("data", "Search %s\n", myIssues)
+			var query string
+			if wfil := u.show("filters"); wfil != nil {
+				query = strings.ReplaceAll(wfil.Selection(), "\n", " ")
+				fmt.Printf("--query--\n%s", query)
+			}
+			if query == "" {
+				query = myIssues()
+			}
+			w.Fprintf("data", "Search %s\n", query)
 			eol(w, 1)
 			w.Ctl("mark")
 			w.Ctl("clean")
