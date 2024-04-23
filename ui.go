@@ -2,7 +2,6 @@ package main
 
 import (
 	"bytes"
-	"fmt"
 	"log"
 	"net/url"
 	"os"
@@ -433,7 +432,6 @@ func (u *UI) look(title string) bool {
 			var query string
 			if wfil := u.show("filters"); wfil != nil {
 				query = strings.ReplaceAll(wfil.Selection(), "\n", " ")
-				fmt.Printf("--query--\n%s", query)
 			}
 			if query == "" {
 				query = myIssues()
