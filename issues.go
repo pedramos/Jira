@@ -128,7 +128,9 @@ func headersFromWindow(w *win) *headers {
 	w.Addr(pickLine, "Assignee")
 	b, err = w.ReadAll("xdata")
 	if err == nil && len(b) != 0 {
-		h.Assignee = string(bytes.TrimSpace(b[len("Assignee:"):]))
+		q0 := bytes.IndexRune(b, '<') + 1
+		q1 := bytes.IndexRune(b, '>')
+		h.Assignee = string(b[q0:q1])
 	}
 	w.Addr(pickLine, "Components")
 	b, err = w.ReadAll("xdata")

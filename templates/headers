@@ -1,7 +1,7 @@
 Summary: {{.Summary}}
 Type: {{.Type.Name}}
 Status: {{quote .Status.Name}}
-Assignee: {{with .Assignee}}{{.Name}}{{end}}
+Assignee: {{with .Assignee}}{{.DisplayName}}<{{.Name}}>{{end}}
 Components:{{range .Components}} {{quote .Name -}}{{end}}
 Labels:{{range sort .Labels}} {{quote . -}}{{end}}
 FixVersion:{{range .FixVersions}} {{.Name -}}{{end}}
